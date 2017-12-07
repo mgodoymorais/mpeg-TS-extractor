@@ -1,0 +1,38 @@
+#pragma once
+
+#define TSPACKET_SYNC(X)		((X & 0xff000000) >> 24)
+#define TSPACKET_TEI(X)			((X & 0x00800000) >> 23)
+#define TSPACKET_PUSI(X)		((X & 0x00400000) >> 22)
+#define TSPACKET_PRIORITY(X)	((X & 0x00200000) >> 21)
+#define TSPACKET_PID(X)			((X & 0x001fff00) >>  8)
+#define TSPACKET_TSC(X)			(X & 0xc0)
+#define TSPACKET_CCOUNTER(X)	(X & 0x0f)
+#define TSPACKET_AFCONTROL(X)	((X & 0x30) >> 4)
+
+#define AFC_DISCONTINUITY(X)	((X & 0x80) >> 7)
+#define AFC_RANDOMACCESS(X)		((X & 0x40) >> 6)
+#define AFC_ESPRIORITY(X)		((X & 0x20) >> 5)
+#define AFC_PCR(X)				((X & 0x10) >> 4)
+#define AFC_OPCR(X)				((X & 0x08) >> 3)
+#define AFC_SPLICINGPOINT(X)	((X & 0x04) >> 2)
+#define AFC_PRIVATEDATA(X)		((X & 0x02) >> 1)
+#define AFC_AFEXT(X)			(X & 0x01)
+
+
+#define PES_STARTCODE(X)			(X & 0xffffff00) >> 8)
+#define PES_OPTHEADER(X)			((X & 0xc000) >> 14)
+#define PES_OPTHEADER_SCRAMBLING(X)	((X & 0x3000) >> 12)
+#define PES_OPTHEADER_PRIORITY(X)	((X & 0x0800) >> 11)
+#define PES_OPTHEADER_ALIGNMENT(X)	((X & 0x0400) >> 10)
+#define PES_OPTHEADER_COPYRIGHT(X)	((X & 0x0200) >> 9)
+#define PES_OPTHEADER_ORIGINAL(X)	((X & 0x0100) >> 8)
+#define PES_OPTHEADER_PTSDTS(X)		((X & 0x00C0) >> 6)
+#define PES_OPTHEADER_ESCR(X)		((X & 0x0020) >> 5)
+#define PES_OPTHEADER_ES(X)			((X & 0x0010) >> 4)
+#define PES_OPTHEADER_DSMTRICK(X)	((X & 0x0008) >> 3)
+#define PES_OPTHEADER_COPYINFO(X)	((X & 0x0004) >> 2)
+#define PES_OPTHEADER_CRC(X)		((X & 0x0002) >> 1)
+#define PES_OPTHEADER_EXTENSION(X)	(X & 0x0001)
+
+#define IS_PES_AUDIO(X)				((X >= 0xC0) && (X <= 0xDF))
+#define IS_PES_VIDEO(X)				((X >= 0xE0) && (X <= 0xEF))
