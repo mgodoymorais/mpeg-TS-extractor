@@ -19,7 +19,7 @@
 #define AFC_AFEXT(X)			(X & 0x01)
 
 
-#define PES_STARTCODE(X)			(X & 0xffffff00) >> 8)
+#define PES_STARTCODE(X)			((X & 0xffffff00) >> 8)
 #define PES_OPTHEADER(X)			((X & 0xc000) >> 14)
 #define PES_OPTHEADER_SCRAMBLING(X)	((X & 0x3000) >> 12)
 #define PES_OPTHEADER_PRIORITY(X)	((X & 0x0800) >> 11)

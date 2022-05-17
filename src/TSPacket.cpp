@@ -48,24 +48,6 @@ namespace TS
         _dataLength = 188 - (_bufferPtr - rawData);
     }
 
-
-    TSPacket::~TSPacket()
-    {
-        if (AFC != nullptr)
-        {
-            delete AFC;
-        }
-        if (PES != nullptr)
-        {
-            if (PES->OptionalHeader != nullptr)
-            {
-                delete PES->OptionalHeader;
-            }
-
-            delete PES;
-        }
-    }
-
     const char * TSPacket::ProcessPacketizedElementaryStream(const char *rawData)
     {
         std::uint32_t startCode;
@@ -77,7 +59,7 @@ namespace TS
 
         startCode = Extractor::Util::EndiannessHelper::GetInstance().Rotate32(startCode);
         length    = Extractor::Util::EndiannessHelper::GetInstance().Rotate16(length   );
-        if ((PES_STARTCODE(startCode) == 1)
+        if (PES_STARTCODE(startCode) == 1)
         {
             rawData += sizeof(startCode);
             rawData += sizeof(length);
@@ -86,7 +68,7 @@ namespace TS
 
             if (IS_PES_AUDIO(streamId) || IS_PES_VIDEO(streamId))
             {
-                PES = new PacketizedElementaryStream;
+                PES = std::make_unique<PacketizedElementaryStream>();
 
                 PES->StreamId = streamId;
                 PES->Length   = length;
@@ -99,7 +81,7 @@ namespace TS
                 {
                     rawData += sizeof(optionalPESHeader);
     
-                    PES->OptionalHeader = new PESOptionalHeader;
+                    PES->OptionalHeader = std::make_unique<PESOptionalHeader>();
 
                     PES->OptionalHeader->Scrambling         = PES_OPTHEADER_SCRAMBLING(optionalPESHeader);
                     PES->OptionalHeader->Priority           = PES_OPTHEADER_PRIORITY(optionalPESHeader);
@@ -136,7 +118,7 @@ namespace TS
 
         std::memcpy(&bitFlags, bufferPtr, sizeof(bitFlags));
 
-        AFC = new AdaptationFieldControl;
+        AFC = std::make_unique<AdaptationFieldControl>();
 
         AFC->Length                 = length;
         AFC->Discontinuity          = AFC_DISCONTINUITY(bitFlags);

@@ -7,7 +7,7 @@ namespace Extractor
 namespace Util
 {
 
-    PidWriter::PidWriter(const char *filename)
+    PidWriter::PidWriter(const std::string& filename)
     : _bufferIndex(0)
     {
         _file.open(filename, std::ios_base::binary);
@@ -19,7 +19,6 @@ namespace Util
         {
             _file.write((const char *)_buffer, _bufferIndex);
         }
-        _file.close();
     }
 
     void PidWriter::Add(const char *data, int byteCount)

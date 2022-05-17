@@ -2,28 +2,45 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <optional>
 
 #include "TSFile.hpp"
+#include "cxxopts.hpp"
 
-int main(int argc, char *argv[])
+cxxopts::ParseResult parse(int argc, const char *argv[])
 {
-    if (argc < 2)
+    cxxopts::ParseResult result;
+    cxxopts::Options options(argv[0], " - mpeg TS extractor");
+    try
     {
-        std::cout << "Incorrect number of parameters" << std::endl;
-        std::cout << "Usage: " << argv[0] << " <filname> [--debug-headers]" << std::endl;
+        options
+            .positional_help("[optional args]")
+            .show_positional_help();
+
+        options.add_options()("d,debug-headers", "Debug TS header processing.", cxxopts::value<bool>());
+        options.add_options("Input / output file")("input-file", "Name of the input file (read only).", cxxopts::value<std::string>());
+        result = options.parse(argc, argv);
+    }
+    catch (const cxxopts::OptionException &e)
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+    return result;
+}
+
+int main(int argc, const char *argv[])
+{
+    auto parameters = parse(argc, argv);
+    if (!parameters.count("input-file"))
+    {
+        std::cout << "Mandatory parameter \"input-file\" is  missing." << std::endl;
         return -1;
     }
-    bool debugHeaders = false;
-    for(int index = 2; index < argc; index++)
-    {
-        if (strcmp(argv[index], "--debug-headers") == 0)
-        {
-            debugHeaders = true;
-        }
-    }
 
-    Extractor::TS::TSFile ts(argv[1], debugHeaders); 
+    Extractor::TS::TSFile ts(
+        parameters["input-file"].as<std::string>(),
+        parameters.count("debug-headers"));
     ts.Extract();
-  
+
     return 0;
 }
